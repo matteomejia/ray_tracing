@@ -4,8 +4,12 @@
 
 #include "cimg.h"
 #include "world.h"
-
-using namespace std;
+#include "camera.h"
+#include "object.h"
+#include "light.h"
+#include "sphere.h"
+#include "plane.h"
+#include "cylinder.h"
 
 using namespace cimg_library;
 typedef unsigned char BYTE;
@@ -13,8 +17,24 @@ typedef unsigned char BYTE;
 int main()
 {
     World world;
-    world.init_camera(60, 10, 640, 480, vec3(20, 40, 80), vec3(0, 0, 0), vec3(0, 1, 0));
-    world.set_light(vec3(35, 35, 50), vec3(1, 1, 1));
+
+    Camera *camera = new Camera;
+    camera->init(60, 10, 640, 480, vec3(20, 40, 80), vec3(0, 0, 0), vec3(0, 1, 0));
+    camera->calcular_vectores();
+
+    world.add_camera(camera);
+
+    Light *light1 = new Light;
+    light1->color = vec3(1, 1, 1);
+    light1->pos = vec3(35, 35, 50);
+
+    world.add_light(light1);
+
+    Light *light2 = new Light;
+    light2->color = vec3(1, 1, 1);
+    light2->pos = vec3(-35, 35, -50);
+
+    world.add_light(light2);
 
     Sphere *sphere1 = new Sphere;
     sphere1->center = vec3(-30, 20, 10);
@@ -22,7 +42,7 @@ int main()
     sphere1->color = vec3(0.2, 0.4, 1);
     sphere1->kd = 0.8;
     sphere1->ke = 0.9;
-    sphere1->n = 4;
+    sphere1->ks = 4;
 
     world.add_object(sphere1);
 
@@ -32,7 +52,7 @@ int main()
     sphere2->color = vec3(1, 1, 0);
     sphere2->kd = 0.8;
     sphere2->ke = 0.4;
-    sphere2->n = 6;
+    sphere2->ks = 6;
 
     world.add_object(sphere2);
 
@@ -53,7 +73,7 @@ int main()
     cylinder1->color = vec3(1, 0, 0);
     cylinder1->kd = 0.8;
     cylinder1->ke = 0.5;
-    sphere2->n = 16;
+    sphere2->ks = 16;
 
     world.add_object(cylinder1);
 
