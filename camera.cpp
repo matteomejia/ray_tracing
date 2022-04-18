@@ -1,4 +1,6 @@
 #include <vector>
+#include <algorithm>
+#include <cmath>
 
 #include "camera.h"
 
@@ -30,16 +32,62 @@ void Camera::calcular_vectores()
     ye = ze.prod_cruz(xe);
 }
 
+void Camera::fresnel(vec3 I, vec3 N, float ior, float &kr)
+{
+    float cosi = std::clamp(-1.f, 1.f, I.prod_punto(N));
+    float etai = 1, etat = ior;
+    if (cosi > 0)
+    {
+        std::swap(etai, etat);
+    }
+    // Compute sini using Snell's law
+    float sint = etai / etat * sqrtf(std::max(0.f, 1 - cosi * cosi));
+    // Total internal reflection
+    if (sint >= 1)
+    {
+        kr = 1;
+    }
+    else
+    {
+        float cost = sqrtf(std::max(0.f, 1 - sint * sint));
+        cosi = fabsf(cosi);
+        float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+        float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+        kr = (Rs * Rs + Rp * Rp) / 2;
+    }
+    // As a consequence of the conservation of energy, transmittance is given by:
+    // kt = 1 - kr;
+}
+
+vec3 Camera::refract(vec3 I, vec3 N, float ior)
+{
+    float cosi = std::clamp(-1.f, 1.f, I.prod_punto(N));
+    float etai = 1, etat = ior;
+    vec3 n = N;
+    if (cosi < 0)
+    {
+        cosi = -cosi;
+    }
+    else
+    {
+        std::swap(etai, etat);
+        n = -N;
+    }
+    float eta = etai / etat;
+    float k = 1 - eta * eta * (1 - cosi * cosi);
+    return k < 0 ? vec3(0) : eta * I + (eta * cosi - sqrtf(k)) * n;
+}
+
 bool Camera::calcular_color(Ray ray, std::vector<Light *> lights, std::vector<Object *> &objects, vec3 &color, int prof)
 {
     if (prof >= prof_max)
     {
-        color = vec3(1, 1, 1);
+        color = vec3(1);
         return false;
     }
 
     float t_calculado, t = 1000000;
-    vec3 color_min(1, 1, 1);
+    vec3 color_min(1);
     vec3 normal, N;
     bool hay_interseccion = false;
 
@@ -80,7 +128,7 @@ bool Camera::calcular_color(Ray ray, std::vector<Light *> lights, std::vector<Ob
             if (!interse)
             {
                 float diffuse_factor = L.prod_punto(N);
-                vec3 diffuse_light(0, 0, 0);
+                vec3 diffuse_light(0);
                 if (diffuse_factor > 0.1)
                 {
                     diffuse_light = light->color * pObj->kd * diffuse_factor;
@@ -89,7 +137,7 @@ bool Camera::calcular_color(Ray ray, std::vector<Light *> lights, std::vector<Ob
                 vec3 r = N * N.prod_punto(L) * 2 - L;
                 vec3 v = -ray.direction;
                 r.normalize();
-                vec3 specular_light(0, 0, 0);
+                vec3 specular_light(0);
                 if (pObj->ke > 0)
                 {
                     float specular_factor = pow(r.prod_punto(v), pObj->ks);
@@ -105,27 +153,49 @@ bool Camera::calcular_color(Ray ray, std::vector<Light *> lights, std::vector<Ob
                 color_min = color_min * ambient_light;
             }
 
-            if (pObj->ke > 0)
+            // Rayos refractados
+            vec3 color_refractado;
+            float kr = pObj->kr;
+            bool outside = ray.direction.prod_punto(N) < 0;
+            vec3 bias = 0.001 * N;
+            if (pObj->ior > 0)
             {
-                Ray reflected_ray;
+                fresnel(ray.direction, N, pObj->ior, kr);
+                if (kr < 1)
+                {
+                    vec3 refDir = refract(ray.direction, N, pObj->ior);
+                    refDir.normalize();
+                    vec3 refOri = outside ? pi - bias : pi + bias;
+                    Ray rayo_refractado(refOri, refDir);
+                    calcular_color(rayo_refractado, lights, objects, color_refractado, prof + 1);
+                }
+            }
+            // Rayos reflejados
+            vec3 color_reflejado;
+            if (kr > 0)
+            {
+                Ray rayo_ref;
                 vec3 vec_rayo = -ray.direction;
 
                 vec3 R = N * (vec_rayo.prod_punto(N)) * 2 - vec_rayo;
                 R.normalize();
-                reflected_ray.direction = R;
-                reflected_ray.origin = (ray.origin + ray.direction * t) + R * 0.1;
-                vec3 color_reflejado;
+                rayo_ref.direction = R;
+                rayo_ref.origin = outside ? pi - bias : pi + bias;
+
                 // lanzar rayo secundario
-                bool interse = calcular_color(reflected_ray, lights, objects, color_reflejado, prof + 1);
+                bool interse = calcular_color(rayo_ref, lights, objects, color_reflejado, prof + 1);
                 // calcular intersecciones
-                if (interse)
+                if (!interse)
                 {
-                    color_min = color_min + color_reflejado * 0.8;
+                    color_reflejado = vec3(0);
+                    // color_min = color_min + color_reflejado*0.8;
                 }
             }
+
+            color_min = color_min + color_reflejado * kr + color_refractado * (1 - kr);
+            color_min.max_to_one();
         }
 
-        color_min.max_to_one();
         color = color_min;
         return true;
     }

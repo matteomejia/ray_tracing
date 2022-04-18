@@ -30,16 +30,16 @@ int main()
 
     world.add_light(light1);
 
-    Light *light2 = new Light;
-    light2->color = vec3(1, 1, 1);
-    light2->pos = vec3(-35, 35, -50);
+    // Light *light2 = new Light;
+    // light2->color = vec3(1, 1, 1);
+    // light2->pos = vec3(-35, 35, -50);
 
-    world.add_light(light2);
+    // world.add_light(light2);
 
     Sphere *sphere1 = new Sphere;
     sphere1->center = vec3(-30, 20, 10);
     sphere1->radius = 20;
-    sphere1->color = vec3(0.2, 0.4, 1);
+    sphere1->color = vec3(1, 0, 1);
     sphere1->kd = 0.8;
     sphere1->ke = 0.9;
     sphere1->ks = 4;
@@ -52,9 +52,21 @@ int main()
     sphere2->color = vec3(1, 1, 0);
     sphere2->kd = 0.8;
     sphere2->ke = 0.4;
-    sphere2->ks = 6;
+    sphere2->ks = 16;
+    sphere2->ior = 2;
+    // sphere2->ks = 6;
 
     world.add_object(sphere2);
+
+    Sphere *sphere3 = new Sphere;
+    sphere3->center = vec3(30, 20, 20);
+    sphere3->radius = 4;
+    sphere3->color = vec3(0, 0, 1);
+    sphere3->kd = 0.8;
+    sphere3->ke = 0.4;
+    sphere3->ks = 16;
+
+    world.add_object(sphere3);
 
     Plane *plane = new Plane;
     plane->n = vec3(1, 10, 1);
@@ -67,15 +79,24 @@ int main()
     world.add_object(plane);
 
     Cylinder *cylinder1 = new Cylinder;
-    cylinder1->pb = vec3(0, 20, 0);
-    cylinder1->pa = vec3(0, 0, 0);
+    cylinder1->pb = vec3(0, 20, 20);
+    cylinder1->pa = vec3(0, 0, 20);
     cylinder1->radius = 10;
-    cylinder1->color = vec3(1, 0, 0);
-    cylinder1->kd = 0.8;
-    cylinder1->ke = 0.5;
-    sphere2->ks = 16;
+    cylinder1->color = vec3(0, 1, 1);
+    cylinder1->ke = 0;
+    cylinder1->ior = 1.5;
 
     world.add_object(cylinder1);
+
+    Sphere *sphere4 = new Sphere;
+    sphere4->center = vec3(0, 10, 20);
+    sphere4->radius = 4;
+    sphere4->color = vec3(1, 1, 1);
+    sphere4->kd = 0.9;
+    sphere4->ke = 0.9;
+    sphere4->ks = 16;
+
+    world.add_object(sphere4);
 
     world.render();
 }

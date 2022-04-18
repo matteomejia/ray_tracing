@@ -32,6 +32,10 @@ public:
 
     void calcular_vectores();
 
+    void fresnel(vec3 I, vec3 N, float ior, float &kr);
+
+    vec3 refract(vec3 I, vec3 N, float ior);
+
     bool calcular_color(Ray ray, std::vector<Light *> lights, std::vector<Object *> &objects, vec3 &color, int prof);
 
     void render(std::vector<Light *> lights, std::vector<Object *> &objects);

@@ -11,6 +11,13 @@ class Ray
 {
 public:
     vec3 origin, direction;
+
+    Ray() = default;
+    Ray(vec3 ori, vec3 dir)
+    {
+        origin = ori;
+        direction = dir;
+    }
 };
 
 #endif // RAY_H

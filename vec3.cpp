@@ -75,6 +75,11 @@ void vec3::max_to_one()
     }
 }
 
+vec3 operator*(float f, vec3 &v)
+{
+    return vec3(v.x * f, v.y * f, v.z * f);
+}
+
 vec3 operator/(float f, vec3 &v)
 {
     if (v.x == 0 || v.y == 0 || v.z == 0)
