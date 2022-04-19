@@ -1,6 +1,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 #include "camera.h"
 
@@ -215,11 +216,11 @@ void Camera::render(std::vector<Light *> lights, std::vector<Object *> &objects)
 
     for (int y = 0; y < h; y++)
     {
+        std::cerr << "\rScanlines remaining: " << h - y - 1 << ' ' << std::flush;
         for (int x = 0; x < w; x++)
         {
             ray.direction = ze * (-f) + ye * a * (y / h - 0.5) + xe * b * (x / w - 0.5);
             ray.direction.normalize();
-            // color_min = vec3(1,1,1);
 
             bool interse = calcular_color(ray, lights, objects, color, 0);
 
@@ -228,6 +229,7 @@ void Camera::render(std::vector<Light *> lights, std::vector<Object *> &objects)
             (*pImg)(x, h - 1 - y, 2) = (BYTE)(color.z * 255);
         }
     }
+    std::cerr << "\nDone.\n";
 
     dis_img.render((*pImg));
     dis_img.paint();
