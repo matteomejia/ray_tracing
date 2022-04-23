@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <cstdlib>
 
 #include "cimg.h"
 #include "world.h"
@@ -11,11 +12,21 @@
 #include "plane.h"
 #include "cylinder.h"
 
-int main()
+int main(int argc, char **argv)
 {
     World world;
 
-    vec3 lookfrom(20, 30, -40);
+    int camera_x = -30; // -30 a 30
+    int camera_z = 30;
+    int fire_x = 5; // 5 a -5
+    int fire_y = 5; // 5 a -5
+
+    // int camera_x = std::atoi(argv[1]);
+    // int camera_z = std::atoi(argv[2]);
+    // int fire_x = std::atoi(argv[3]);
+    // int fire_y = std::atoi(argv[4]);
+
+    vec3 lookfrom(camera_x, 30, camera_z);
     vec3 lookat(0, 10, 0);
     vec3 up(0, 1, 0);
 
@@ -50,14 +61,14 @@ int main()
     cylinder_outer->color = vec3(0.25f, 0.25f, 0.25f);
     cylinder_outer->pa = vec3(0, 20, 0);
     cylinder_outer->pb = vec3(0, 0, 0);
-    cylinder_outer->radius = 10;
+    cylinder_outer->radius = 12;
     cylinder_outer->ior = 1;
 
     Cylinder *cylinder_inner = new Cylinder;
     cylinder_inner->color = vec3(0.25f, 0.25f, 0.25f);
     cylinder_inner->pa = vec3(0, 19.5, 0);
     cylinder_inner->pb = vec3(0, 0.5, 0);
-    cylinder_inner->radius = 9.5;
+    cylinder_inner->radius = 11.5;
     cylinder_inner->ior = 1;
 
     Cylinder *tapa = new Cylinder;
@@ -75,7 +86,7 @@ int main()
     // Firefly 1
 
     Sphere *fire1 = new Sphere;
-    fire1->center = vec3(0, 10, 0);
+    fire1->center = vec3(fire_x, 10, fire_y);
     fire1->color = vec3(1, 1, 0);
     fire1->radius = 0.5;
     fire1->kd = 0.8;
@@ -93,7 +104,7 @@ int main()
     // Firefly 2
 
     Sphere *fire2 = new Sphere;
-    fire2->center = vec3(4, 10, 0);
+    fire2->center = vec3(-fire_x, 10, -fire_y);
     fire2->color = vec3(1, 1, 0);
     fire2->radius = 0.5;
     fire2->kd = 0.8;
