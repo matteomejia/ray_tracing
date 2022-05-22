@@ -4,17 +4,14 @@ La escena es configurable desde el archivo ```main.cpp```
 
 # Instrucciones para ejecutar
 
-1. Ejecutar el script de compilación.
+1. Compilación y ejecución.
 
 ```bash
-chmod +x build.sh
-./build.sh
-```
-
-2. Ejecutar archivo compilado
-
-```bash
-./a.out
+mkdir build
+cd build
+cmake ..
+cmake --build .
+./RayTracing
 ```
 
 El resultado aparecerá en una ventana.
