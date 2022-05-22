@@ -1,7 +1,3 @@
-//
-// Created by matte on 8/04/2022.
-//
-
 #ifndef LIGHT_H
 #define LIGHT_H
 

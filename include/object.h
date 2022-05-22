@@ -1,7 +1,3 @@
-//
-// Created by matte on 8/04/2022.
-//
-
 #ifndef OBJECT_H
 #define OBJECT_H
 
@@ -24,7 +20,7 @@ public:
         ior = 0;
     }
 
-    virtual bool interseccion(Ray &ray, float &t, vec3 &normal) = 0;
+    virtual bool interseccion(Ray& ray, float& t, vec3& normal) = 0;
 };
 
 #endif // OBJECT_H

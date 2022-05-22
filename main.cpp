@@ -12,7 +12,7 @@
 #include "plane.h"
 #include "cylinder.h"
 
-int main(int argc, char **argv)
+void escenario()
 {
     World world;
 
@@ -30,20 +30,19 @@ int main(int argc, char **argv)
     vec3 lookat(0, 10, 0);
     vec3 up(0, 1, 0);
 
-    Camera *camera = new Camera;
-    camera->init(60, 10, 640, 480, lookfrom, lookat, up);
+    Camera *camera = new Camera(60, 10, 640, 480, lookfrom, lookat, up);
     camera->calcular_vectores();
 
     world.add_camera(camera);
 
-    Plane *plane = new Plane;
-    plane->n = vec3(1, 10, 1);
+    Plane *plane = new Plane();
+    plane->n = vec3(1.0f, 10.0f, 1.0f);
     plane->n.normalize();
-    plane->d = 0;
-    plane->color = vec3(0.5, 0.5, 0.5);
-    plane->kd = 0.9;
-    plane->ke = 0;
-    plane->kr = 0.5;
+    plane->d = 0.0f;
+    plane->color = vec3(0.5f, 0.5f, 0.5f);
+    plane->kd = 0.9f;
+    plane->ke = 0.0f;
+    plane->kr = 0.5f;
 
     world.add_object(plane);
 
@@ -57,27 +56,18 @@ int main(int argc, char **argv)
 
     // Frasco y Tapa
 
-    Cylinder *cylinder_outer = new Cylinder;
+    Cylinder *cylinder_outer = new Cylinder(vec3(0.0f, 20.0f, 0.0f), vec3(0.0f), 12.0f);
+    cylinder_outer->ior = 1.0f;
     cylinder_outer->color = vec3(0.25f, 0.25f, 0.25f);
-    cylinder_outer->pa = vec3(0, 20, 0);
-    cylinder_outer->pb = vec3(0, 0, 0);
-    cylinder_outer->radius = 12;
-    cylinder_outer->ior = 1;
 
-    Cylinder *cylinder_inner = new Cylinder;
+    Cylinder *cylinder_inner = new Cylinder(vec3(0.0f, 19.5f, 0.0f), vec3(0.0f, 0.5f, 0.0f), 11.5f);
+    cylinder_inner->ior = 1.0f;
     cylinder_inner->color = vec3(0.25f, 0.25f, 0.25f);
-    cylinder_inner->pa = vec3(0, 19.5, 0);
-    cylinder_inner->pb = vec3(0, 0.5, 0);
-    cylinder_inner->radius = 11.5;
-    cylinder_inner->ior = 1;
 
-    Cylinder *tapa = new Cylinder;
-    tapa->color = vec3(1, 0, 0);
-    tapa->pa = vec3(0, 22, 0);
-    tapa->pb = vec3(0, 20, 0);
-    tapa->radius = 8;
-    tapa->kd = 0.8;
-    tapa->ke = 0.8;
+    Cylinder *tapa = new Cylinder(vec3(0.0f, 22.0f, 0.0f), vec3(0.0f, 20.0f, 0.0f), 8.0f);
+    tapa->kd = 0.8f;
+    tapa->ke = 0.8f;
+    tapa->color = vec3(1.0f, 0.0f, 0.0f);
 
     world.add_object(cylinder_outer);
     world.add_object(cylinder_inner);
@@ -85,14 +75,12 @@ int main(int argc, char **argv)
 
     // Firefly 1
 
-    Sphere *fire1 = new Sphere;
-    fire1->center = vec3(fire_x, 10, fire_y);
-    fire1->color = vec3(1, 1, 0);
-    fire1->radius = 0.5;
-    fire1->kd = 0.8;
-    fire1->ke = 0.8;
+    Sphere *fire1 = new Sphere(vec3(fire_x, 10.0f, fire_y), 0.5f);
+    fire1->color = vec3(1.0f, 1.0f, 0.0f);
+    fire1->kd = 0.8f;
+    fire1->ke = 0.8f;
     // fire1->ior = 1.5;
-    fire1->kr = 8;
+    fire1->kr = 8.0f;
 
     Light *light1 = new Light;
     light1->pos = vec3(0, 10, 0);
@@ -103,14 +91,12 @@ int main(int argc, char **argv)
 
     // Firefly 2
 
-    Sphere *fire2 = new Sphere;
-    fire2->center = vec3(-fire_x, 10, -fire_y);
-    fire2->color = vec3(1, 1, 0);
-    fire2->radius = 0.5;
-    fire2->kd = 0.8;
-    fire2->ke = 0.8;
+    Sphere *fire2 = new Sphere(vec3(-fire_x, 10.0f, -fire_y), 0.5f);
+    fire2->color = vec3(1.0f, 1.0f, 0.0f);
+    fire2->kd = 0.8f;
+    fire2->ke = 0.8f;
     // fire2->ior = 1.5;
-    fire2->kr = 8;
+    fire2->kr = 8.0f;
 
     Light *light2 = new Light;
     light2->pos = vec3(4, 10, 0);
@@ -121,27 +107,45 @@ int main(int argc, char **argv)
 
     // External Sphere
 
-    Sphere *sphere1 = new Sphere;
-    sphere1->center = vec3(16, 10, 16);
-    sphere1->color = vec3(0, 1, 1);
-    sphere1->radius = 4;
-    sphere1->kd = 0.8;
-    sphere1->ke = 0.8;
-    sphere1->ks = 8;
+    Sphere *sphere1 = new Sphere(vec3(16.0f, 10.0f, 16.0f), 4.0f);
+    sphere1->color = vec3(0.0f, 1.0f, 1.0f);
+    sphere1->kd = 0.8f;
+    sphere1->ke = 0.8f;
+    sphere1->ks = 8.0f;
 
     world.add_object(sphere1);
 
     // External Cylinder
 
-    Cylinder *cylinder1 = new Cylinder;
-    cylinder1->color = vec3(1, 0, 0);
-    cylinder1->pa = vec3(-20, 10, 10);
-    cylinder1->pb = vec3(-20, 0, 10);
-    cylinder1->radius = 5;
-    cylinder1->kd = 0.8;
-    cylinder1->kr = 0.8;
+    Cylinder *cylinder1 = new Cylinder(vec3(-20.0f, 10.0f, 10.0f), vec3(-20.0f, 0.0f, 10.0f), 5.0f);
+    cylinder1->color = vec3(1.0f, 0.0f, 0.0f);
+    cylinder1->kd = 0.8f;
+    cylinder1->kr = 0.8f;
 
     world.add_object(cylinder1);
 
     world.render();
+}
+
+int main(int argc, char **argv)
+{
+    vec3 lookFrom(50.0f, 20.0f, 10.0f);
+    vec3 lookAt(0.0f, 0.0f, 0.0f);
+    vec3 up(0.0f, 1.0f, 0.0f);
+
+    Camera camera(60.0f, 10.0f, 800, 600, lookFrom, lookAt, up);
+    camera.calcular_vectores();
+
+    std::cout << "xe: " << camera.xe << "\n"
+              << "ye: " << camera.ye << "\n"
+              << "ze: " << camera.ze << std::endl;
+
+    Sphere *sphere = new Sphere(vec3(0.0f, 0.0f, 0.0f), 4.0f);
+
+    Ray ray;
+    ray.direction = vec3(0.0f, 0.0f, 0.0f);
+    ray.origin = vec3(40.0f, 40.0f, 40.0f);
+
+    vec3 pi = sphere->get_pi(ray);
+    std::cout << pi << std::endl;
 }

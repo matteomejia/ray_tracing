@@ -5,12 +5,7 @@
 
 #include "camera.h"
 
-Camera::Camera()
-{
-    prof_max = 4;
-}
-
-void Camera::init(float angle, float _near, int width, int height, vec3 pos, vec3 cen, vec3 _up)
+Camera::Camera(float angle, float _near, int width, int height, vec3 pos, vec3 cen, vec3 _up)
 {
     fov = angle;
     eye = pos;
@@ -19,6 +14,7 @@ void Camera::init(float angle, float _near, int width, int height, vec3 pos, vec
     f = _near;
     w = width;
     h = height;
+    prof_max = 4;
 
     a = 2 * f * tan(fov * 3.141592654 / 360);
     b = a * w / h;

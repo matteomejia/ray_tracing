@@ -1,7 +1,3 @@
-//
-// Created by matte on 8/04/2022.
-//
-
 #ifndef WORLD_H
 #define WORLD_H
 
@@ -14,17 +10,19 @@
 class World
 {
 public:
-    Camera *cam;
-    std::vector<Light *> lights;
-    std::vector<Object *> objects;
+	Camera* cam;
+	std::vector<Light*> lights;
+	std::vector<Object*> objects;
 
-    void add_camera(Camera *camera);
+	World() = default;
 
-    void add_light(Light *light);
+	void add_camera(Camera* camera);
 
-    void add_object(Object *obj);
+	void add_light(Light* light);
 
-    void render();
+	void add_object(Object* obj);
+
+	void render();
 };
 
 #endif // WORLD_H
